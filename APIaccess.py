@@ -1,4 +1,7 @@
-Python 3.7.2 (v3.7.2:9a3ffc0492, Dec 24 2018, 02:44:43) 
-[Clang 6.0 (clang-600.0.57)] on darwin
-Type "help", "copyright", "credits" or "license()" for more information.
->>> 
+from github import Github
+
+g = Github("3e0d6fcd7bfcd3420bc62d9b5f717e99ddd820e8")
+
+for repo in g.get_user().get_repos():
+  print(repo.name)
+  
