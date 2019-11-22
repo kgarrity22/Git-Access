@@ -1,62 +1,73 @@
 
 <!DOCTYPE html>
+<html>
+  <meta charset="utf-8">
+  <style>
 
-<!-- need to add zoom capability
-change color on hover
-the bubbles
-the option to select which bubbles you're looking article
-the data
--->
+  .selected{
+    fill: #333333;
+  }
+  .unselected{
+    fill: pink;
+  }
+   svg{
+     background: powderblue;
+   }
 
+   .country {
+     fill: pink;
+     stroke: #333333;
+     stroke-width: 1;
+   }
 
-<meta charset="utf-8">
+  </style>
+  <body>
+    <!-- <div id="map"></div> -->
+      <!-- Bringing in d3 library -->
+      <script src="https://d3js.org/d3.v4.min.js"></script>
+      <!-- bringing in topojson file for creating lightweight maps -->
+      <script src="https://unpkg.com/topojson-client@3"></script>
 
-<body>
-<script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
-<!-- <script src="trip_data.js"></script> -->
-<script src="https://unpkg.com/topojson-client@3"></script>
-<script>
-var width = window.innerWidth,
-    height = window.innerHeight,
-    centered,
-    clicked_point;
+      <script>
+        var width = window.innerWidth,
+            height = window.innerHeight,
+            centered,
+            clicked_point;
 
-var projection = d3.geoMercator()
-    .translate([width / 2.2, height / 1.5]);
+        var projection = d3.geoMercator()
+            .translate([width/2, height/2]);
 
-var plane_path = d3.geoPath()
-        .projection(projection);
+        var svg = d3.select("body").append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .attr("class", "map")
 
-var svg = d3.select("body").append("svg")
-    .attr("width", width)
-    .attr("height", height)
-    .attr("class", "map");
+        var g = svg.append("g");
 
-var g = svg.append("g");
-var path = d3.geoPath()
-    .projection(projection);
-
-// load and display the World
-d3.json("https://unpkg.com/world-atlas@1/world/110m.json", function(error, topology) {
-    g.selectAll("path")
-      .data(topojson.feature(topology, topology.objects.countries)
-          .features)
-      .enter()
-      .append("path")
-      .attr("d", path)
-      // .on("mouseover", change_color)
-      // .on("click", zoom)
-      ;
-
-// //change_color
-// function change_color
-//
-// //function to zoom when clicked
-// function zoom()
-//
- });
+        var path = d3.geoPath()
+            .projection(projection);
 
 
-</script>
-</body>
+        d3.json("https://unpkg.com/world-atlas@1/world/110m.json", function(error, topology) {
+
+          var countries = topojson.feature(topology, topology.objects.countries).features;
+
+            g.selectAll(".country")
+              .data(countries)
+              .enter()
+              .append("path")
+              .attr("class", "country")
+              .attr("d", path)
+              .on('mouseover', function(d){
+                d3.selectAll(".country")
+                d3.select(this).attr("style", "fill: yellow");
+              })
+              .on('mouseout', function(d){
+                d3.selectAll(".country")
+                d3.select(this).attr("style", "fill: pink");
+
+              });
+           });
+    </script>
+  </body>
 </html>
