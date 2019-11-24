@@ -36,3 +36,9 @@ geopy.geocoders.options.default_ssl_context = ctx
 geolocator = Nominatim()
 location = geolocator.geocode("175 5th Avenue NYC")
 print(location.address)
+
+# code to get a user's location 
+commit = commits[0]
+
+user = commit.committer
+print(user.location)
