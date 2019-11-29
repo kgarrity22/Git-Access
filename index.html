@@ -28,7 +28,7 @@
       <!-- bringing in topojson file for creating lightweight maps -->
       <script src="https://unpkg.com/topojson-client@3"></script>
       <!-- Bringing in the location data -->
-      <script src="locations.csv"></script>
+      <script src="https://raw.githubusercontent.com/kgarrity22/location/master/location2.csv"></script>
 
       <script>
         var width = window.innerWidth,
@@ -39,9 +39,10 @@
         var projection = d3.geoMercator()
             .translate([width/2, height/2]);
 
+
         var svg = d3.select("body").append("svg")
             .attr("width", width)
-            .attr("height", height)
+            .attr("height", height);
 
 
         var g = svg.append("g");
@@ -49,13 +50,9 @@
         var path = d3.geoPath()
             .projection(projection);
 
+        d3.json("https://unpkg.com/world-atlas@1/world/110m.json", function (error, topology) {
 
-        d3.json("https://unpkg.com/world-atlas@1/world/110m.json", function(error, topology) {
-
-
-
-          var countries = topojson.feature(topology, topology.objects.countries).features;
-
+          var countries = topojson.feature(topology, topology.objects.countries).features
             g.selectAll(".country")
               .data(countries)
               .enter()
@@ -68,33 +65,33 @@
               })
               .on('mouseout', function(d){
                 d3.selectAll(".country")
-                d3.select(this).attr("style", "fill: pink");
-              })
+                d3.select(this).attr("style", "fill: pink")
+              });
 
-              d3.csv("locations.csv", function(error, data) {
-                  g.selectAll("circle")
-                    .data(data)
-                    .enter()
-                    .append("circle")
-                    .attr("cx", function(d) {
-                      return projection([d.long, d.lat])[0];
-                    })
-                    .attr("cy", function(d) {
-                      return projection([d.long, d.lat])[1];
-                    })
-                    .attr("r", 20)
-                    .style("fill", "red");
+
+              d3.csv("https://raw.githubusercontent.com/kgarrity22/location/master/location2.csv", function (data){
+                    svg.selectAll("circles")
+                      .data(data)
+                      .enter()
+                      .append("cricle")
+                      .attr("cx", function(d) {
+                            return projection([d.long, d.lat])[0];
+                      })
+                      .attr("cy", function(d) {
+                            return projection([d.long, d.lat])[1];
+                      })
+                      .attr("r", 15)
+                      .attr("d", circle)
+                      .style("fill", "red");
+                    });
+
 
           });
 
-        })
-
-
-
-
-
-
 
     </script>
+
+
+
   </body>
 </html>

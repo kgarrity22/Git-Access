@@ -1,4 +1,4 @@
-long,lat,location,name,commit number,username
+lon,lat,location,name,commits,username
 ﻿-78.7811964,35.7883046,"Cary, NC",Michael DeHaan,5418,"NamedUser(login=""mpdehaan"")"
 -125.3118342,50.2380853,"Granite Bay, CA",Toshio Kuratomi,5256,"NamedUser(login=""abadger"")"
 -122.6741949,45.5202471,"Portland, Oregon, USA",Matt Clay,2998,"NamedUser(login=""mattclay"")"

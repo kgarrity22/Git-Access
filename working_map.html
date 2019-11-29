@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+  <script src='https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.js'></script>
+  <link href='https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.css' rel='stylesheet' />
+
+  <style>
+    body { margin:0;position:fixed;top:0;right:0;bottom:0;left:0; }
+    #map {
+      position:relative;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="map"></div>
+  <script>
+
+    L.mapbox.accessToken = 'pk.eyJ1IjoiZW5qYWxvdCIsImEiOiJjaWhtdmxhNTIwb25zdHBsejk0NGdhODJhIn0.2-F2hS_oTZenAWc0BMf_uw'
+
+    // create leaflet map with mapbox
+    var map = L.mapbox.map('map', 'mapbox.pencil', {maxZoom: 2000, minZoom: 0})
+    .setView([42.3601,-71.0589], 15);
+
+    // create overlay to add dots at long and lat
+    var svg = d3.select(map.getPanes().overlayPane)
+      .append("svg");
+    var g = svg.append("g").attr("class", "leaflet-zoom-hide");
+
+    function project(location) {
+      // adapting csv data points for leaflet
+      var a = [+location.lat, +location.lon];
+
+      var point = map.latLngToLayerPoint(L.latLng(location))
+      return point;
+    }
+
+    // get the data from the csv posted on my github
+    d3.csv("https://raw.githubusercontent.com/kgarrity22/location/master/location2.csv", function(err, data) {
+      var points = g.selectAll("circle")
+        .data(data)
+
+      points.enter().append("circle").classed("dot", true)
+      .attr("r", 10)
+      .style({
+        fill: "#ff6699",
+        "fill-opacity": 0.8,
+        stroke: "black",
+        "stroke-width": 3
+      })
+
+
+      // function for reposition svg when we navigate around the map
+      function render() {
+
+        var bounds = map.getBounds();
+        var topLeft = map.latLngToLayerPoint(bounds.getNorthWest())
+        var bottomRight = map.latLngToLayerPoint(bounds.getSouthEast())
+        svg.style("width", map.getSize().x + "px")
+          .style("height", map.getSize().y + "px")
+          .style("left", topLeft.x + "px")
+          .style("top", topLeft.y + "px");
+        g.attr("transform", "translate(" + -topLeft.x + "," + -topLeft.y + ")");
+
+        // new projection with the overlay
+        g.selectAll("circle.dot")
+        .attr({
+          cx: function(d) { return project(d).x},
+          cy: function(d) { return project(d).y},
+        })
+
+      }
+
+      // when we navigate around the map, render the map again
+      map.on("viewreset", function() {
+        render()
+      })
+      map.on("move", function() {
+        render()
+      })
+
+      // each time we refresh, just render the intial position
+      render()
+    })
+
+  </script>
+</body>
